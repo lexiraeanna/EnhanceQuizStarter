@@ -16,7 +16,8 @@ struct Question {
     let answer: String
 }
 
-let questionsPerRound = 4
+class GameManager {
+let questionsPerRound: Int
 var questionsAsked = 0
 var correctQuestions = 0
 var usedNumbers: [Int] = []
@@ -39,13 +40,17 @@ let trivia: [Question] = [
     Question(question: "Which of these countries won the most medals in the 2012 Summer Games?", options: ["France", "Germany", "Japan", "Great Britian"], answer: "Great Britian")
 ]
 
-func checkNumber() -> Int {
-   indexOfSelectedQuestion = GKRandomSource.sharedRandom().nextInt(upperBound: trivia.count)
+    init(questionsPerRound: Int) {
+       self.questionsPerRound = questionsPerRound
+    }
+    
+    func checkNumber() -> Int {
+   self.indexOfSelectedQuestion = GKRandomSource.sharedRandom().nextInt(upperBound: trivia.count)
    while usedNumbers.contains(indexOfSelectedQuestion) {
-    indexOfSelectedQuestion = GKRandomSource.sharedRandom().nextInt(upperBound: trivia.count)
+    self.indexOfSelectedQuestion = GKRandomSource.sharedRandom().nextInt(upperBound: trivia.count)
     }
     usedNumbers.append(indexOfSelectedQuestion)
     return indexOfSelectedQuestion
+    }
 }
-
 

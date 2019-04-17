@@ -15,7 +15,7 @@ class ViewController: UIViewController {
 
     // MARK: - Properties
     var gameSound: SystemSoundID = 0
-
+    var gameManager = GameManager(questionsPerRound: 4)
     // MARK: - Outlets
     
     @IBOutlet weak var questionField: UILabel!
@@ -47,8 +47,8 @@ class ViewController: UIViewController {
     
 
     func displayQuestion() {
-       let randomNumber = checkNumber()
-    let questionDisplay = trivia[randomNumber]
+       let randomNumber = gameManager.checkNumber()
+        let questionDisplay = gameManager.trivia[randomNumber]
         questionField.text = questionDisplay.question
     
         Option1.setTitle(questionDisplay.options[0], for: UIControl.State.normal)
@@ -78,11 +78,11 @@ class ViewController: UIViewController {
         // Display play again button
         playAgainButton.isHidden = false
         
-        questionField.text = "Way to go!\nYou got \(correctQuestions) out of \(questionsPerRound) correct!"
+        questionField.text = "Way to go!\nYou got \(gameManager.correctQuestions) out of \(gameManager.questionsPerRound) correct!"
     }
     
     func nextRound() {
-        if questionsAsked == questionsPerRound {
+        if gameManager.questionsAsked == gameManager.questionsPerRound {
             // Game is over
             displayScore()
         } else {
@@ -107,11 +107,11 @@ class ViewController: UIViewController {
     
     @IBAction func checkAnswer(_ sender: UIButton) {
         // Increment the questions asked counter
-        questionsAsked += 1
+       gameManager.questionsAsked += 1
         
-        let selectedQuestionDict = trivia[indexOfSelectedQuestion]
+        let selectedQuestionDict = gameManager.trivia[gameManager.indexOfSelectedQuestion]
         if (sender === Option1 &&  selectedQuestionDict.answer == selectedQuestionDict.options[0]) || (sender === Option2 &&  selectedQuestionDict.answer == selectedQuestionDict.options[1]) || (sender === Option3 &&  selectedQuestionDict.answer == selectedQuestionDict.options[2]) || (sender === Option4 &&  selectedQuestionDict.answer == selectedQuestionDict.options[3]){
-            correctQuestions += 1
+            gameManager.correctQuestions += 1
             questionField.text = "Correct!"
         } else {
             questionField.text = "Sorry, wrong answer!"
@@ -129,8 +129,8 @@ class ViewController: UIViewController {
         Option4.isHidden = false
     
         
-        questionsAsked = 0
-        correctQuestions = 0
+        gameManager.questionsAsked = 0
+        gameManager.correctQuestions = 0
         nextRound()
     }
     
