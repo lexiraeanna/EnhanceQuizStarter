@@ -12,22 +12,10 @@ import AudioToolbox
 
 class ViewController: UIViewController {
     
+
     // MARK: - Properties
-    
-    let questionsPerRound = 4
-    var questionsAsked = 0
-    var correctQuestions = 0
-    var indexOfSelectedQuestion = 0
-    
     var gameSound: SystemSoundID = 0
-    
-    let trivia: [[String : String]] = [
-        ["Question": "Only female koalas can whistle", "Answer": "False"],
-        ["Question": "Blue whales are technically whales", "Answer": "True"],
-        ["Question": "Camels are cannibalistic", "Answer": "False"],
-        ["Question": "All ducks are birds", "Answer": "True"]
-    ]
-    
+
     // MARK: - Outlets
     
     @IBOutlet weak var questionField: UILabel!
@@ -57,15 +45,31 @@ class ViewController: UIViewController {
         AudioServicesPlaySystemSound(gameSound)
     }
     
+
     func displayQuestion() {
-        indexOfSelectedQuestion = GKRandomSource.sharedRandom().nextInt(upperBound: trivia.count)
-        let questionDictionary = trivia[indexOfSelectedQuestion]
-        questionField.text = questionDictionary["Question"]
+       let randomNumber = checkNumber()
+    let questionDisplay = trivia[randomNumber]
+        questionField.text = questionDisplay.question
+    
+        Option1.setTitle(questionDisplay.options[0], for: UIControl.State.normal)
+        Option2.setTitle(questionDisplay.options[1], for: UIControl.State.normal)
+        if (questionDisplay.options.count <= 2) {
+            Option3.isHidden = true
+            Option4.isHidden = true
+        } else {
+            Option3.isHidden = false
+            Option3.setTitle(questionDisplay.options[2], for: UIControl.State.normal)
+            if (questionDisplay.options.count == 4) {
+                Option4.isHidden = false
+                Option4.setTitle(questionDisplay.options[3], for: UIControl.State.normal)
+            }
+        }
+
         playAgainButton.isHidden = true
     }
     
     func displayScore() {
-        // Hide the answer uttons
+        // Hide the answer buttons
         Option1.isHidden = true
         Option2.isHidden = true
         Option3.isHidden = true
@@ -106,16 +110,14 @@ class ViewController: UIViewController {
         questionsAsked += 1
         
         let selectedQuestionDict = trivia[indexOfSelectedQuestion]
-        let correctAnswer = selectedQuestionDict["Answer"]
-        
-        if (sender === Option1 &&  correctAnswer == "True") || (sender === Option2 && correctAnswer == "False") {
+        if (sender === Option1 &&  selectedQuestionDict.answer == selectedQuestionDict.options[0]) || (sender === Option2 &&  selectedQuestionDict.answer == selectedQuestionDict.options[1]) || (sender === Option3 &&  selectedQuestionDict.answer == selectedQuestionDict.options[2]) || (sender === Option4 &&  selectedQuestionDict.answer == selectedQuestionDict.options[3]){
             correctQuestions += 1
             questionField.text = "Correct!"
         } else {
             questionField.text = "Sorry, wrong answer!"
         }
         
-        loadNextRound(delay: 2)
+        loadNextRound(delay: 1)
     }
     
     
@@ -125,6 +127,7 @@ class ViewController: UIViewController {
         Option2.isHidden = false
         Option3.isHidden = false
         Option4.isHidden = false
+    
         
         questionsAsked = 0
         correctQuestions = 0
